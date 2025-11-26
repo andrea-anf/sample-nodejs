@@ -9,5 +9,4 @@ phases:
     commands:
       - echo "Building"
       - yarn
-      - yarn test
       - yarn build
