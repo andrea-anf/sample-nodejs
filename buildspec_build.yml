@@ -14,16 +14,16 @@ phases:
     
   pre_build:
     commands:
-      - echo "Building image"
-      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ECR_URI
-      - aws ecr describe-repositories --repository-names $REPOSITORY_NAME || aws ecr create-repository --repository-name $REPOSITORY_NAME --region $AWS_REGION
       - REPOSITORY_URI=$(aws ecr describe-repositories --repository-names $REPOSITORY_NAME --query "repositories[0].repositoryUri" --output text)
-      - docker pull $REPOSITORY_URI:latest
+      - IMAGE_TAG=$CODEBUILD_RESOLVED_SOURCE_VERSION
+
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REPOSITORY_URI
+      - aws ecr describe-repositories --repository-names $REPOSITORY_NAME
 
   build:
     commands:
       - docker images
-      - docker build --tag $REPOSITORY_URI:latest .
+      - docker build --tag $REPOSITORY_URI:$IMAGE_TAG .
       - echo "DOCKER BUILD COMPLETED"
   
   post_build:
