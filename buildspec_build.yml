@@ -3,10 +3,30 @@ version: 0.2
 phases:
   install:
     commands:
+      - aws --version
       - echo "Installing Node.js 18"
       - n 18
+      - aws --version
+      - AWS_REGION=eu-south-1
+      - AWS_ECR_URI=$AWS_ACCOUNT.dkr.ecr.$AWS_REGION.amazonaws.com
+      - REPOSITORY_NAME=sample-app
+
+    
+  pre_build:
+    commands:
+      - echo "Building image"
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ECR_URI
+      - aws ecr describe-repositories --repository-names $REPOSITORY_NAME || aws ecr create-repository --repository-name $REPOSITORY_NAME --region $AWS_REGION
+      - REPOSITORY_URI=$(aws ecr describe-repositories --repository-names $REPOSITORY_NAME --query "repositories[0].repositoryUri" --output text)
+      - docker pull $REPOSITORY_URI:latest
+
   build:
     commands:
-      - echo "Building"
-      - docker
-      - docker build -t nodeapp:v1 .
+      - docker images
+      - docker build --tag $REPOSITORY_URI:latest .
+      - echo "DOCKER BUILD COMPLETED"
+  
+  post_build:
+    commands:
+      - echo "PUSHING IMAGE TO $REPOSITORY_URI"
+      - docker push --all-tags $REPOSITORY_URI
