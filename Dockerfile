@@ -1,5 +1,5 @@
 FROM node:8-alpine
-COPY . /src
-RUN cd /src && npm install
-EXPOSE 4000
-CMD ["node", "/src/index.js"]
+COPY . /
+RUN npm install
+EXPOSE 3000
+CMD ["npm", "start"]

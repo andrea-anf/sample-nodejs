@@ -1,6 +1,6 @@
 {
   "name": "sample-app",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "sample app to deploy with ECS/Fargate",
   "main": "index.js",
   "scripts": {
