@@ -1,20 +1,12 @@
-const express = require('express')
-const app = express()
-const port = process.env.PORT || 3000
+var http = require('http')
 
-var LoremIpsum = require('lorem-ipsum').LoremIpsum;
+var port = 4000
 
-var lorem = new LoremIpsum({
-  sentencesPerParagraph: {
-    max: 8,
-    min: 4
-  },
-  wordsPerSentence: {
-    max: 16,
-    min: 4
-  }
-});
+var server = http.createServer(function (request, response) {
+  response.writeHead(200, {'Content-Type': 'text/plain'})
+  response.end('Hello World\n')
+})
 
-app.get('/', (req, res) => res.send(lorem.generateParagraphs(7)))
+server.listen(port)
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+console.log('Server running at http://localhost:' + port)
